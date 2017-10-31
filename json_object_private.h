@@ -44,8 +44,9 @@ struct json_object
         int len;
     } c_string;
   } o;
-  json_object_delete_fn *_user_delete;
-  void *_userdata;
+  // [1] is for _to_json_string
+  json_object_delete_fn *_user_delete[2];
+  void *_userdata[2];
 };
 
 void _set_last_err(const char *err_fmt, ...);

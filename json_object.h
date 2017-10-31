@@ -314,10 +314,6 @@ JSON_EXPORT void json_object_set_userdata(json_object *jso, void *userdata,
  * If this is not provided, it is up to the caller to free the userdata at
  * an appropriate time. (i.e. after the json_object is deleted)
  *
- * Note that the userdata is the same as set by json_object_set_userdata(), so
- * care must be taken not to overwrite the value when both a custom serializer
- * and json_object_set_userdata() are used.
- *
  * @param jso the object to customize
  * @param to_string_func the custom serialization function
  * @param userdata an optional opaque cookie

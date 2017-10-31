@@ -194,8 +194,9 @@ int json_object_put(struct json_object *jso)
 	if (--jso->_ref_count > 0) return 0;
 #endif
 
-	if (jso->_user_delete)
-		jso->_user_delete(jso, jso->_userdata);
+	for ( int i = 0; i < 2; i++ )
+		if (jso->_user_delete[i])
+			jso->_user_delete[i](jso, jso->_userdata[i]);
 	jso->_delete(jso);
 	return 1;
 }
@@ -249,21 +250,31 @@ enum json_type json_object_get_type(const struct json_object *jso)
 }
 
 void* json_object_get_userdata(json_object *jso) {
-	return jso ? jso->_userdata : NULL;
+	return jso ? jso->_userdata[0] : NULL;
 }
 
-void json_object_set_userdata(json_object *jso, void *userdata,
-			      json_object_delete_fn *user_delete)
+static void
+json_object_set_userdata_internal(
+	json_object *jso,
+	void *userdata,
+	json_object_delete_fn *user_delete,
+	int index)
 {
 	// Can't return failure, so abort if we can't perform the operation.
 	assert(jso != NULL);
 
 	// First, clean up any previously existing user info
-	if (jso->_user_delete)
-		jso->_user_delete(jso, jso->_userdata);
+	if (jso->_user_delete[index])
+		jso->_user_delete[index](jso, jso->_userdata[index]);
 
-	jso->_userdata = userdata;
-	jso->_user_delete = user_delete;
+	jso->_userdata[index] = userdata;
+	jso->_user_delete[index] = user_delete;
+}
+
+void json_object_set_userdata(json_object *jso, void *userdata,
+			      json_object_delete_fn *user_delete)
+{
+	json_object_set_userdata_internal(jso, userdata, user_delete, 0);
 }
 
 /* set a custom conversion to string */
@@ -273,7 +284,7 @@ void json_object_set_serializer(json_object *jso,
 	void *userdata,
 	json_object_delete_fn *user_delete)
 {
-	json_object_set_userdata(jso, userdata, user_delete);
+	json_object_set_userdata_internal(jso, userdata, user_delete, 1);
 
 	if (to_string_func == NULL)
 	{
@@ -846,7 +857,7 @@ int json_object_double_to_json_string(struct json_object* jso,
 				      int flags)
 {
 	return json_object_double_to_json_string_format(jso, pb, level, flags,
-							(const char *)jso->_userdata);
+							(const char *)jso->_userdata[1]);
 }
 
 struct json_object* json_object_new_double(double d)
@@ -881,8 +892,8 @@ struct json_object* json_object_new_double_s(double d, const char *ds)
 int json_object_userdata_to_json_string(struct json_object *jso,
 	struct printbuf *pb, int level, int flags)
 {
-	int userdata_len = strlen((const char *)jso->_userdata);
-	printbuf_memappend(pb, (const char *)jso->_userdata, userdata_len);
+	int userdata_len = strlen((const char *)jso->_userdata[1]);
+	printbuf_memappend(pb, (const char *)jso->_userdata[1], userdata_len);
 	return userdata_len;
 }
 
