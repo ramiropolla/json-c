@@ -50,6 +50,17 @@
 # error You do not have strncasecmp on your system.
 #endif /* HAVE_STRNCASECMP */
 
+/* inline helpers to speed up parsing */
+static inline int is_ws_char(char c)
+{
+	return c == ' '
+	    || c == '\t'
+	    || c == '\n'
+	    || c == '\v'
+	    || c == '\f'
+	    || c == '\r';
+}
+
 /* Use C99 NAN by default; if not available, nan("") should work too. */
 #ifndef NAN
 #define NAN nan("")
@@ -295,7 +306,7 @@ struct json_object* json_tokener_parse_ex(struct json_tokener *tok,
 
     case json_tokener_state_eatws:
       /* Advance until we change state */
-      while (isspace((unsigned char)c)) {
+      while (is_ws_char(c)) {
 	if ((!ADVANCE_CHAR(str, tok)) || (!PEEK_CHAR(c, tok)))
 	  goto out;
       }
