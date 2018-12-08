@@ -68,6 +68,16 @@ static inline int is_hex_char(char c)
 	    || (c >= 'a' && c <= 'f');
 }
 
+static inline int is_number_char(char c)
+{
+	return (c >= '0' && c <= '9')
+	    || c == '.'
+	    || c == '+'
+	    || c == '-'
+	    || c == 'e'
+	    || c == 'E';
+}
+
 /* Use C99 NAN by default; if not available, nan("") should work too. */
 #ifndef NAN
 #define NAN nan("")
@@ -752,7 +762,7 @@ struct json_object* json_tokener_parse_ex(struct json_tokener *tok,
 	int case_len=0;
 	int is_exponent=0;
 	int negativesign_next_possible_location=1;
-	while(c && strchr(json_number_chars, c)) {
+	while(c && is_number_char(c)) {
 	  ++case_len;
 
 	  /* non-digit characters checks */
