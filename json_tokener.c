@@ -50,8 +50,8 @@
 # error You do not have strncasecmp on your system.
 #endif /* HAVE_STRNCASECMP */
 
-/* inline helpers to speed up parsing */
-static inline int is_ws_char(char c)
+/* helpers to speed up parsing */
+static int is_ws_char(char c)
 {
 	return c == ' '
 	    || c == '\t'
@@ -61,14 +61,14 @@ static inline int is_ws_char(char c)
 	    || c == '\r';
 }
 
-static inline int is_hex_char(char c)
+static int is_hex_char(char c)
 {
 	return (c >= '0' && c <= '9')
 	    || (c >= 'A' && c <= 'F')
 	    || (c >= 'a' && c <= 'f');
 }
 
-static inline int is_number_char(char c)
+static int is_number_char(char c)
 {
 	return (c >= '0' && c <= '9')
 	    || c == '.'
@@ -78,7 +78,7 @@ static inline int is_number_char(char c)
 	    || c == 'E';
 }
 
-static inline int parse_int64(const char *buf, int64_t *retval)
+static int parse_int64(const char *buf, int64_t *retval)
 {
 	int neg = (*buf == '-');
 	if (neg)
