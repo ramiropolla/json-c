@@ -50,7 +50,12 @@
 # error You do not have strncasecmp on your system.
 #endif /* HAVE_STRNCASECMP */
 
-/* helpers to speed up parsing */
+/* The following helper functions are used to speed up parsing. They
+ * are faster than their ctype counterparts because they assume that
+ * the input is in ASCII and that the locale is set to "C". The
+ * compiler will also inline these functions, providing an additional
+ * speedup by saving on function calls.
+ */
 static int is_ws_char(char c)
 {
 	return c == ' '
