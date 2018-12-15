@@ -94,7 +94,7 @@ static inline int parse_int64(const char *buf, int64_t *retval)
 		// Check for overflow.
 		if (uval > tmp)
 		{
-			*retval = neg ? LLONG_MIN : LLONG_MAX;
+			*retval = neg ? INT64_MIN : INT64_MAX;
 			return 0;
 		}
 		uval = tmp;
