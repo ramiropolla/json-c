@@ -191,6 +191,8 @@ int json_parse_double(const char *buf, double *retval)
   return end == buf ? 1 : 0;
 }
 
+// The input buffer 'buf' must contain only digits (0 to 9), except
+// for the first character, which may be a negative sign '-'.
 int json_parse_sanitized_int64(const char *buf, size_t len, int64_t *retval)
 {
 	uint64_t uval = 0;
