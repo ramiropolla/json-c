@@ -86,8 +86,8 @@ static int is_number_char(char c)
 static int parse_int64(const char *buf, int64_t *retval)
 {
 	uint64_t uval = 0;
-	int neg = (*buf == '-');
-	if (neg)
+	int is_negative = (*buf == '-');
+	if (is_negative)
 		buf++;
 
 	if (*buf == '\0')
@@ -99,13 +99,13 @@ static int parse_int64(const char *buf, int64_t *retval)
 		// Check for overflow.
 		if (uval > tmp)
 		{
-			*retval = neg ? INT64_MIN : INT64_MAX;
+			*retval = is_negative ? INT64_MIN : INT64_MAX;
 			return 0;
 		}
 		uval = tmp;
 	}
 
-	*retval = neg ? -uval : uval;
+	*retval = is_negative ? -uval : uval;
 
 	return 0;
 }
