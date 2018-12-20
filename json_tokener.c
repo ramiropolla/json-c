@@ -83,19 +83,18 @@ static int is_number_char(char c)
 	    || c == 'E';
 }
 
-static int parse_int64(const char *buf, int64_t *retval)
+static int parse_int64(const char *buf, size_t len, int64_t *retval)
 {
 	uint64_t uval = 0;
 	int is_negative = (*buf == '-');
-	if (is_negative)
-		buf++;
+	size_t ii = is_negative ? 1 : 0;
 
-	if (*buf == '\0')
+	if (ii == len)
 		return 1;
 
-	while (*buf != '\0')
+	while (ii < len)
 	{
-		uint64_t tmp = (uval * 10) + *(buf++) - '0';
+		uint64_t tmp = (uval * 10) + buf[ii++] - '0';
 		// Check for overflow.
 		if (uval > tmp)
 		{
@@ -851,7 +850,7 @@ struct json_object* json_tokener_parse_ex(struct json_tokener *tok,
       {
 	int64_t num64;
 	double  numd;
-	if (!tok->is_double && parse_int64(tok->pb->buf, &num64) == 0) {
+	if (!tok->is_double && parse_int64(tok->pb->buf, tok->pb->bpos, &num64) == 0) {
 		if (num64 && tok->pb->buf[0]=='0' &&
 		    (tok->flags & JSON_TOKENER_STRICT)) {
 			/* in strict mode, number must not start with 0 */
