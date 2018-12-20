@@ -85,6 +85,7 @@ static int is_number_char(char c)
 
 static int parse_int64(const char *buf, int64_t *retval)
 {
+	uint64_t uval = 0;
 	int neg = (*buf == '-');
 	if (neg)
 		buf++;
@@ -92,7 +93,6 @@ static int parse_int64(const char *buf, int64_t *retval)
 	if (*buf == '\0')
 		return 1;
 
-	uint64_t uval = 0;
 	while (*buf != '\0')
 	{
 		uint64_t tmp = (uval * 10) + *(buf++) - '0';
